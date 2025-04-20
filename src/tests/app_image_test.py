@@ -21,7 +21,10 @@ class AppImageTest:
         """
         # Corrigido: convertendo para string
         img_path = str(
-            Path(__file__).parent.parent / "samples" / "patio-mottu-example" / "img1.png"
+            Path(__file__).parent.parent
+            / "samples"
+            / "patio-mottu-example"
+            / "img1.png"
         )
         img = cv2.imread(img_path)
 
