@@ -1,6 +1,4 @@
-from src.tests.app_image_test import AppImageTest
+from src.app import App
 
-# app = App()
-# app = AppTest()
-app = AppImageTest()
+app = App()
 app.run()
