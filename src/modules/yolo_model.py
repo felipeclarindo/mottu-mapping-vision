@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from typing import Union
 
 
 class YoloModel:
@@ -13,7 +14,7 @@ class YoloModel:
         """
         self.model = self.load_model()
 
-    def load_model(self):
+    def load_model(self) -> torch.nn.Module | None:
         """
         Loads the YOLO model.
 
@@ -21,9 +22,13 @@ class YoloModel:
             torch.nn.Module: The loaded YOLO model.
         """
         try:
-            # Carrega o modelo yolo mais leve (você pode trocar para yolov5m ou yolov5l se quiser mais precisão)
-            model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
-            model.eval()  # Garante que está em modo de inferência
+            # Loading yolo v5l model from torch hub
+            torch.hub.set_dir("./src/model")
+            model = torch.hub.load(
+                "ultralytics/yolov5", "yolov5l", pretrained=True, force_reload=True
+            )
+
+            model.eval()  # Ensures it is in inference mode
             return model
         except (RuntimeError, OSError) as e:
             print(f"Erro ao carregar o modelo: {e}")
@@ -44,26 +49,21 @@ class YoloModel:
 
         return self.model(image)
 
-    def predict(self, image_path: str):
+    def start(self, frame: str | np.ndarray) -> torch.Tensor:
         """
-        Executa a predição com o caminho da imagem.
+        Start the YOLO model inference.
 
         Args:
-            image_path (str): Caminho da imagem.
+            frame (str | np.ndarray): image or video frame.
+
+        Raises:
+            ValueError: If the model is not loaded.
 
         Returns:
-            results: Resultado da inferência.
+            torch.Tensor: The inference results.
         """
+
         if self.model is None:
-            raise ValueError("Modelo não carregado.")
+            raise ValueError("Model not loaded.")
 
-        return self.model(image_path)
-
-    def show_results(self, results):
-        """
-        Exibe os resultados da predição.
-
-        Args:
-            results: Resultado da inferência.
-        """
-        results.show()
+        return self.model(frame)
