@@ -1,6 +1,6 @@
 torch==2.6.0
 torchvision==0.21.0
-opencv-python==4.10.0.84
+opencv-python==4.11.0.86
 numpy==2.1.1
 matplotlib==3.10.1
 yolov5==7.0.14
