@@ -22,12 +22,9 @@ class YoloModel:
             torch.nn.Module: The loaded YOLO model.
         """
         try:
-            # Loading yolo v5l model from torch hub
-            torch.hub.set_dir("./src/model")
             model = torch.hub.load(
                 "ultralytics/yolov5", "yolov5l", pretrained=True, force_reload=True
             )
-
             model.eval()  # Ensures it is in inference mode
             return model
         except (RuntimeError, OSError) as e:
