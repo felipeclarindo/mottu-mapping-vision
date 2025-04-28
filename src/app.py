@@ -1,4 +1,5 @@
 from .modules.computational_vision import ComputationalVision
+from .utils.utils import clear_terminal
 
 
 class App:
@@ -16,6 +17,11 @@ class App:
         """
         Display the menu options.
         """
+        clear_terminal()
+        print("-----------------------")
+        print("----- Vision Menu -----")
+        print("-----------------------")
+        print("Select an option:")
         print("[1] Capture video")
         print("[2] Capture image")
         print("[3] Exit")
