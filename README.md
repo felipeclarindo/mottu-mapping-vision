@@ -18,4 +18,4 @@ Contributions are welcome! If you have suggestions for improvements, feel free t
 
 ## License
 
-This project is licensed under the [GNU Affero License](https://www.gnu.org/licenses/agpl-3.
+This project is licensed under the [GNU Affero License](<https://www.gnu.org/licenses/agpl-3>.

@@ -7,3 +7,4 @@ yolov5==7.0.14
 ultralytics==8.3.111
 requests==2.32.3
 easyocr==1.7.2
+google-generativeai==0.8.5
