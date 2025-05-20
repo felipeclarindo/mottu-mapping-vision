@@ -23,9 +23,9 @@ class YoloModel:
         """
         try:
             model = torch.hub.load(
-                "ultralytics/yolov5", "yolov5l", pretrained=True, force_reload=True
+                "ultralytics/yolov5", "yolov5m", pretrained=True, force_reload=True
             )
-            model.eval()  # Ensures it is in inference mode
+            model.eval()
             return model
         except (RuntimeError, OSError) as e:
             print(f"Erro ao carregar o modelo: {e}")
@@ -33,16 +33,15 @@ class YoloModel:
 
     def __call__(self, image: np.ndarray):
         """
-        Permite que a instância seja chamada como função.
+        Allows the class to be called as a function.
 
         Args:
-            image (np.ndarray): Imagem em formato array (BGR ou RGB).
-
+            image (np.ndarray): image or video frame(rgb format).
         Returns:
             results: Resultado da inferência.
         """
         if self.model is None:
-            raise ValueError("Modelo não carregado.")
+            raise ValueError("Model not loaded.")
 
         return self.model(image)
 

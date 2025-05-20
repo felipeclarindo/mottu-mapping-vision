@@ -12,16 +12,25 @@ class ComputationalVision:
     """
 
     def __init__(self) -> None:
+        """
+        Initializes the ComputationalVision class with default values.
+        """
         self.model = YoloModel()
         self.api_sender = ApiSender()
         self._detector = PlateAndSectorDetector()
 
     def capture_image(self) -> None:
+        """
+        Capture an image from a file and process it.
+
+        Raises:
+            FileNotFoundError: If the image file is not found.
+        """
         img_path = str(
             Path(__file__).parent.parent
             / "samples"
             / "patio_mottu"
-            / "cut"
+            / "with_plate"
             / "img1.png"
         )
         img = cv2.imread(img_path)
@@ -34,6 +43,9 @@ class ComputationalVision:
         cv2.destroyAllWindows()
 
     def capture_video(self) -> None:
+        """
+        Capture video from the camera and process each frame.
+        """
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
         if not cap.isOpened():
@@ -54,6 +66,13 @@ class ComputationalVision:
         cv2.destroyAllWindows()
 
     def process_frame(self, frame: np.array, input_type: str) -> None:
+        """
+        Process the frame to detect motorcycles and their plates.
+
+        Args:
+            frame (np.array): The frame to process.
+            input_type (str): The type of input ("IMAGE" or "VIDEO").
+        """
         frame_rgb = frame[..., ::-1]
         results = self.model.start(frame_rgb)
         df = results.pandas().xyxy[0]

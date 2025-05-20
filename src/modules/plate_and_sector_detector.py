@@ -72,11 +72,9 @@ class PlateAndSectorDetector:
             dict: Model Response.
         """
         try:
-            # Converter numpy array para PIL.Image
             image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
             pil_image = Image.fromarray(image_rgb)
 
-            # Enviar para o Gemini
             response = self.model.generate_content(
                 [prompt, pil_image],
                 generation_config={"max_output_tokens": 500},
