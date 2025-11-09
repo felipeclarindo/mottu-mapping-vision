@@ -22,7 +22,7 @@ class PlateAndSectorDetector:
         """
         self.api_key = environ.get("GEMINI_API_KEY")
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-1.5-flash")
 
     def detect(self, moto_coordinates: dict, frame: np.array) -> dict:
         """
@@ -35,7 +35,7 @@ class PlateAndSectorDetector:
         Returns:
             dict: Detected sector color and license plate.
         """
-        sectors = ["yellow", "light_green", "blue", "red"]
+        sectors = ["yellow", "light_green"]
 
         x1 = moto_coordinates["x1"]
         x2 = moto_coordinates["x2"]
@@ -50,7 +50,7 @@ class PlateAndSectorDetector:
         prompt = (
             "Você está vendo a imagem de uma moto. "
             "Por favor, me diga:\n"
-            f"1. Qual é a cor do setor no chão, escolha apenas um dentre: {sectors}.\n"
+            f"1. Qual é a **cor do setor no chão dentre dos setores: [{",".join(sectors).endswith(".")}]** onde a moto está?\n"
             "2. Qual é o **texto da placa** da moto, se estiver visível\n"
             "Responda em formato JSON com as chaves 'sector_color' e 'plate'."
             'Response Example: {"sector_color": "yellow", "plate": "ABC1234"} CASO NAO IDENTIFIQUE, RESPONDA APENAS O IDENTIFICADO E CASO NAO IDENTIFIQUE NADA, RESPONDA {}'
@@ -95,7 +95,7 @@ class PlateAndSectorDetector:
                     return result
 
         except Exception as e:
-            # print(f"Erro ao processar resposta do Gemini: {e}")
+            print(f"Erro ao processar resposta do Gemini: {e}")
             return {"sector_color": None, "plate": None}
 
     def _extract_json_fallback(self, raw_text: str) -> dict:

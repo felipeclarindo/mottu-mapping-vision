@@ -2,9 +2,8 @@ import cv2
 import numpy as np
 from pathlib import Path
 from ..model.yolo_model import YoloModel
-from .api_sender import ApiSender
+from .db_sender import DbSender
 from .plate_and_sector_detector import PlateAndSectorDetector
-
 
 class ComputationalVision:
     """
@@ -16,7 +15,7 @@ class ComputationalVision:
         Initializes the ComputationalVision class with default values.
         """
         self.model = YoloModel()
-        self.api_sender = ApiSender()
+        self.db_sender = DbSender()
         self._detector = PlateAndSectorDetector()
 
     def capture_image(self) -> None:
@@ -88,19 +87,25 @@ class ComputationalVision:
 
             if "moto" in label:
                 motos_detectadas.append(
-                    {"coordinates": {"x1": x1, "y1": y1, "x2": x2, "y2": y2}},
+                    {
+                        "coordinates": {"x1": x1, "y1": y1, "x2": x2, "y2": y2},
+                        "moto_id": None,
+                        "sector_color": None,
+                        "patio": "patio_mottu",
+                        "confianca": float(row["confidence"]) if "confidence" in row else None,
+                    }
                 )
 
         for moto in motos_detectadas:
             detection = self._detector.detect(moto["coordinates"], frame)
-            if detection.get("sector_color") is None:
-                print("No sector color detected.")
+            # if detection.get("sector_color") is None:
+            #     print("No sector color detected.")
 
-            if detection.get("plate") is None:
-                print("No plate detected.")
+            # if detection.get("plate") is None:
+            #     print("No plate detected.")
 
-            moto["sector_color"] = detection.get("sector_color", None)
-            moto["plate"] = detection.get("plate", None)
+            moto["sector_color"] = detection.get("sector_color")
+            moto["moto_id"] = detection.get("plate")
 
         print(motos_detectadas)
         # Draw rectangles and text
@@ -140,3 +145,17 @@ class ComputationalVision:
         }
         print("Payload to API:")
         print(len(payload["motos"]), "motos detectadas")
+        print(type(payload))
+        motos_para_envio = [
+            {
+                "moto_id": moto["moto_id"],
+                "setor": moto["sector_color"],
+                "patio": moto["patio"],
+                "confianca": moto["confianca"],
+            }
+            for moto in motos_detectadas
+            if moto["moto_id"] is not None and moto["sector_color"] is not None
+        ]
+
+        self.db_sender.set_motos(motos_para_envio)
+        self.db_sender.send_motos(motos_para_envio) 
